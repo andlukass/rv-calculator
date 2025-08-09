@@ -1,0 +1,40 @@
+{
+  "app": {
+    "title": "Calculadora Recibos Verdes",
+    "pageTitle": "Calculadora Recibos Verdes"
+  },
+  "common": {
+    "select": "Selecione"
+  },
+  "inputs": {
+    "revenues": "Rendimentos",
+    "monthly": "Mensais",
+    "annual": "Anuais",
+    "foreignIncome": "Rendimentos no estrangeiro",
+    "domesticIncome": "Rendimentos em Portugal",
+    "ssExempt": "Isento de Segurança Social"
+  },
+  "tooltips": {
+    "foreignIncome": "Serviços a entidades com sede fora de Portugal não pagam IVA.",
+    "ssExempt": "No primeiro ano de recibos verdes, é comum haver isenção de contribuições para a Segurança Social."
+  },
+  "irsJovem": {
+    "label": "IRS Jovem",
+    "options": {
+      "none": "Sem IRS Jovem",
+      "year1": "1º ano",
+      "year2_4": "2º ao 4º ano",
+      "year5_7": "5º ao 7º ano",
+      "year8_10": "8º ao 10º ano"
+    }
+  },
+  "summary": {
+    "monthlyNetTitle": "O que irá receber mensalmente:",
+    "labels": {
+      "ss": "Segurança Social",
+      "irs": "IRS",
+      "vat": "IVA",
+      "net": "Lucro Líquido"
+    }
+  }
+}
