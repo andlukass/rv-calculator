@@ -1,6 +1,7 @@
-export type IRSJovemOption = 'none' | 'year1' | 'year2' | 'year3' | 'year4' | 'year5'
+export type IRSJovemOption = 'none' | 'year1' | 'year2_4' | 'year5_7' | 'year8_10'
 
 const VAT_RATE = 0.23
+const VAT_EXEMPT_THRESHOLD = 15000
 const SOCIAL_SECURITY_RATE = 0.214
 const SOCIAL_SECURITY_BASE = 0.7
 const IRS_COEFFICIENT = 0.75
@@ -8,11 +9,10 @@ const IAS = 509.27
 const IRS_JOVEM_LIMIT = 55 * IAS
 const IRS_JOVEM_EXEMPTIONS: Record<IRSJovemOption, number> = {
   none: 0,
-  year1: 0.5,
-  year2: 0.4,
-  year3: 0.3,
-  year4: 0.2,
-  year5: 0.1,
+  year1: 1,
+  year2_4: 0.75,
+  year5_7: 0.5,
+  year8_10: 0.25,
 }
 
 const IRS_BRACKETS = [
@@ -42,25 +42,22 @@ function calculateIRSPayable(taxable: number) {
 }
 
 export function calculateTaxes({
-  withVAT,
-  withoutVAT,
-  isMonthly,
+  domestic,
+  foreign,
   irsJovem,
 }: {
-  withVAT: number
-  withoutVAT: number
-  isMonthly: boolean
+  domestic: number
+  foreign: number
   irsJovem: IRSJovemOption
 }) {
-  const factor = isMonthly ? 12 : 1
-  const grossWithVAT = withVAT * factor
-  const grossWithoutVAT = withoutVAT * factor
-  const vatBase = grossWithVAT / (1 + VAT_RATE)
-  const vatToPay = grossWithVAT - vatBase
-  const totalRevenue = vatBase + grossWithoutVAT
+  const totalRevenue = domestic + foreign
+  const vatToPay = domestic < VAT_EXEMPT_THRESHOLD ? 0 : domestic * VAT_RATE
   const ss = totalRevenue * SOCIAL_SECURITY_BASE * SOCIAL_SECURITY_RATE
   const irsBase = totalRevenue * IRS_COEFFICIENT
-  const exemption = Math.min(irsBase * IRS_JOVEM_EXEMPTIONS[irsJovem], IRS_JOVEM_LIMIT)
+  const exemption = Math.min(
+    irsBase * IRS_JOVEM_EXEMPTIONS[irsJovem],
+    IRS_JOVEM_LIMIT
+  )
   const irsTaxable = Math.max(irsBase - exemption, 0)
   const irs = calculateIRSPayable(irsTaxable)
   const net = totalRevenue - ss - irs

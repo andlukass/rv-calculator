@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Switch } from "@/components/ui/switch"
 import {
   Select,
   SelectTrigger,
@@ -21,61 +20,55 @@ import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip as ChartTooltip } fro
 
 const irsOptions = [
   { value: "none", label: "Sem IRS Jovem" },
-  { value: "year1", label: "IRS Jovem - 1º ano" },
-  { value: "year2", label: "IRS Jovem - 2º ano" },
-  { value: "year3", label: "IRS Jovem - 3º ano" },
-  { value: "year4", label: "IRS Jovem - 4º ano" },
-  { value: "year5", label: "IRS Jovem - 5º ano" },
+  { value: "year1", label: "1º ano" },
+  { value: "year2_4", label: "2º ao 4º ano" },
+  { value: "year5_7", label: "5º ao 7º ano" },
+  { value: "year8_10", label: "8º ao 10º ano" },
 ]
 
 function App() {
-  const [withVAT, setWithVAT] = useState(0)
-  const [withoutVAT, setWithoutVAT] = useState(0)
-  const [isMonthly, setIsMonthly] = useState(true)
+  const [domestic, setDomestic] = useState(0)
+  const [foreign, setForeign] = useState(0)
   const [irsJovem, setIrsJovem] = useState<IRSJovemOption>("none")
 
-  const { annual } = calculateTaxes({ withVAT, withoutVAT, isMonthly, irsJovem })
-  const displayFactor = isMonthly ? 1 / 12 : 1
+  const { annual } = calculateTaxes({ domestic, foreign, irsJovem })
   const data = [
-    { name: "Segurança Social", value: annual.ss * displayFactor },
-    { name: "IRS", value: annual.irs * displayFactor },
-    { name: "IVA", value: annual.vat * displayFactor },
-    { name: "Líquido", value: annual.net * displayFactor },
+    { name: "Segurança Social", value: Math.round(annual.ss) },
+    { name: "IRS", value: Math.round(annual.irs) },
+    { name: "IVA", value: Math.round(annual.vat) },
+    { name: "Líquido", value: Math.round(annual.net) },
   ]
+  const COLORS = ["#f87171", "#60a5fa", "#a78bfa", "#34d399"]
 
   return (
-    <TooltipProvider>
+    <TooltipProvider delayDuration={100}>
       <div className="mx-auto max-w-2xl p-4 space-y-6">
         <h1 className="text-2xl font-bold text-center">Calculadora Recibos Verdes</h1>
-        <div className="flex items-center space-x-2">
-          <Switch id="period" checked={isMonthly} onCheckedChange={setIsMonthly} />
-          <Label htmlFor="period">Valores mensais</Label>
-        </div>
         <div className="space-y-4">
           <div className="grid gap-2">
-            <Label htmlFor="withVAT">Rendimentos com IVA</Label>
+            <Label htmlFor="domestic">Rendimentos em Portugal</Label>
             <Input
-              id="withVAT"
+              id="domestic"
               type="number"
-              value={withVAT}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWithVAT(Number(e.target.value))}
+              value={domestic}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDomestic(Number(e.target.value))}
             />
           </div>
           <div className="grid gap-2">
             <div className="flex items-center gap-2">
-              <Label htmlFor="withoutVAT">Rendimentos isentos de IVA</Label>
+              <Label htmlFor="foreign">Rendimentos no estrangeiro</Label>
               <Tooltip>
                 <TooltipTrigger className="cursor-help text-sm">ⓘ</TooltipTrigger>
                 <TooltipContent>
-                  Serviços a empresas com sede fora de Portugal não pagam IVA.
+                  Serviços a entidades com sede fora de Portugal não pagam IVA.
                 </TooltipContent>
               </Tooltip>
             </div>
             <Input
-              id="withoutVAT"
+              id="foreign"
               type="number"
-              value={withoutVAT}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setWithoutVAT(Number(e.target.value))}
+              value={foreign}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setForeign(Number(e.target.value))}
             />
           </div>
           <div className="grid gap-2">
@@ -99,7 +92,7 @@ function App() {
             <PieChart>
               <Pie data={data} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={80} label>
                 {data.map((_, index) => (
-                  <Cell key={index} fill={["#f87171", "#60a5fa", "#a78bfa", "#34d399"][index]} />
+                  <Cell key={index} fill={COLORS[index]} />
                 ))}
               </Pie>
               <ChartTooltip />
@@ -107,10 +100,15 @@ function App() {
           </ResponsiveContainer>
         </div>
         <div className="space-y-1 text-sm">
-          <p>Segurança Social: {(annual.ss * displayFactor).toFixed(2)} €</p>
-          <p>IRS: {(annual.irs * displayFactor).toFixed(2)} €</p>
-          <p>IVA: {(annual.vat * displayFactor).toFixed(2)} €</p>
-          <p>Líquido: {(annual.net * displayFactor).toFixed(2)} €</p>
+          {data.map((item, index) => (
+            <p key={item.name} className="flex items-center gap-2">
+              <span
+                className="w-3 h-3"
+                style={{ backgroundColor: COLORS[index] }}
+              />
+              {item.name}: {item.value} €
+            </p>
+          ))}
         </div>
       </div>
     </TooltipProvider>
