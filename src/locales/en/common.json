@@ -1,0 +1,40 @@
+{
+  "app": {
+    "title": "Green Receipts Calculator",
+    "pageTitle": "Green Receipts Calculator"
+  },
+  "common": {
+    "select": "Select"
+  },
+  "inputs": {
+    "revenues": "Revenues",
+    "monthly": "Monthly",
+    "annual": "Annual",
+    "foreignIncome": "Foreign income",
+    "domesticIncome": "Income in Portugal",
+    "ssExempt": "Social Security exempt"
+  },
+  "tooltips": {
+    "foreignIncome": "Services to entities based outside Portugal are not subject to VAT.",
+    "ssExempt": "In the first year using green receipts, it's common to be exempt from Social Security contributions."
+  },
+  "irsJovem": {
+    "label": "Youth IRS",
+    "options": {
+      "none": "No Youth IRS",
+      "year1": "1st year",
+      "year2_4": "2nd to 4th year",
+      "year5_7": "5th to 7th year",
+      "year8_10": "8th to 10th year"
+    }
+  },
+  "summary": {
+    "monthlyNetTitle": "What you'll receive monthly:",
+    "labels": {
+      "ss": "Social Security",
+      "irs": "IRS",
+      "vat": "VAT",
+      "net": "Net Profit"
+    }
+  }
+}
